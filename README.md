@@ -99,7 +99,7 @@ This solution implements a complete event sourcing pattern and event-driven arch
    dotnet run
    ```
 
-4. **Run theBanking Projections API**
+4. **Run the Banking Projections API**
    ```bash
    cd Projections.Banking.API
    dotnet run

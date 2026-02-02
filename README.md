@@ -61,8 +61,8 @@ This solution implements a complete event sourcing pattern and event-driven arch
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd PostgresEventSourcing
+   git clone https://github.com/jarDotNet/EDA-ES
+   cd EDA-ES
    ```
 
 2. **Start all services**
@@ -346,7 +346,7 @@ The Docker containers are configured to access the external database using:
 ### Project Structure
 
 ```
-PostgresEventSourcing/
+EDA-ES/
 ├── ESsample.Banking.API/                           # Banking API (Event Sourcing)
 ├── ESsample.Banking.Shared/                        # Shared contracts and integrations events
 ├── EventBus/                                       # Event bus abstractions
@@ -363,7 +363,7 @@ PostgresEventSourcing/
 ├── Projections.Banking.Postgres/                   # PostgreSQL implementation for reading models storage
 ├── Directory.Build.props                           # Shared build settings 
 ├── docker-compose.yml                              # Docker services configuration file 
-├── PostgresEventSourcing.sln                       # Visual Studio solution file
+├── EDA-ES.sln                                      # Visual Studio solution file
 └── README.md                                       # This file
 ```
 

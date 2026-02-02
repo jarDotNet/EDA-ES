@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+	<TargetFramework>net8.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<UserSecretsId>2db8be93-150f-46ff-b8de-a89e802bb396</UserSecretsId>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\ESsample.Banking.Shared\ESsample.Banking.Shared.csproj" />
+	<ProjectReference Include="..\EventBus.Kafka\EventBus.Kafka.csproj" />
+	<ProjectReference Include="..\EventSourcing.Postgres\EventSourcing.Postgres.csproj" />
+  </ItemGroup>
+
+</Project>

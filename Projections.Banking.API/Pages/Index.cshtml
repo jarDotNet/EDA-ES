@@ -1,0 +1,83 @@
+@page
+@model Projections.Banking.API.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Welcome to the Banking Projections Service</h1>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Banking Projection System</h5>
+                <p class="card-text">
+                    This service uses Projections generated from the Event Driven system to display bank account balancess and transactions.
+                    Projections are read models that transform a stream of events from an Event Souring system into a specific, query-optimized view of the data.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-book"></i> API Documentation
+                        </h5>
+                        <p class="card-text">
+                            Explore all the available endpoints for displaying account balances and transactions.
+                        </p>
+                        <a href="/swagger" target="_blank" class="btn btn-primary">
+                            View Swagger UI
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-currency-exchange"></i> Account Balances
+                        </h5>
+                        <p class="card-text">
+                            View the current balances of all bank accounts.
+                        </p>
+                        <a href="/AccountBalances" class="btn btn-success">
+                            View Balances
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-card-checklist"></i> Account Transactions
+                        </h5>
+                        <p class="card-text">
+                            View the list of transactions for any account.
+                        </p>
+                        <a href="/AccountTransactions" class="btn btn-secondary">
+                            View Transactions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Available Features:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-graph-up text-success"></i> View bank account balances</li>
+                        <li><i class="bi bi-card-list text-primary"></i> View list of transactions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

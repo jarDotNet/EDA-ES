@@ -1,0 +1,10 @@
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+*.log
+*.user
+*.lock.json
+.vs/
+.blackduck/

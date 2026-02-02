@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+	<TargetFramework>net8.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<UserSecretsId>dotnet-Projections.Banking.Consumer-20240101-000000</UserSecretsId>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
+	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\ESsample.Banking.Shared\ESsample.Banking.Shared.csproj" />
+	<ProjectReference Include="..\EventBus.Kafka\EventBus.Kafka.csproj" />
+	<ProjectReference Include="..\Projections.Banking.Postgres\Projections.Banking.Postgres.csproj" />
+	<ProjectReference Include="..\Projections.Banking\Projections.Banking.csproj" />
+  </ItemGroup>
+
+</Project>

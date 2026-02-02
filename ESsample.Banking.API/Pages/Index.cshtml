@@ -1,0 +1,87 @@
+@page
+@model ESsample.Banking.API.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Welcome to the Banking System with Event Sourcing</h1>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Banking Management System</h5>
+                <p class="card-text">
+                    This system uses Event Sourcing to manage bank accounts and their transactions.
+                    All operations are recorded as immutable events, enabling complete reconstruction of any account's state.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-book"></i> API Documentation
+                        </h5>
+                        <p class="card-text">
+                            Explore all the available endpoints for managing accounts, deposits, withdrawals, and money transfers.
+                        </p>
+                        <a href="/swagger" target="_blank" class="btn btn-primary">
+                            View Swagger UI
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-clock-history"></i> Account History
+                        </h5>
+                        <p class="card-text">
+                            View the complete event and transaction history for any account.
+                        </p>
+                        <a href="/AccountHistory" class="btn btn-success">
+                            View History
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-currency-euro"></i> Account Balance
+                        </h5>
+                        <p class="card-text">
+                            View the current balance for any account.
+                        </p>
+                        <a href="/AccountBalance" class="btn btn-secondary">
+                            View Balance
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Available Features:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-plus-circle text-success"></i> Create new bank accounts</li>
+                        <li><i class="bi bi-arrow-down-circle text-primary"></i> Perform money deposits</li>
+                        <li><i class="bi bi-arrow-up-circle text-warning"></i> Make money withdrawals</li>
+                        <li><i class="bi bi-arrow-repeat text-muted"></i> Transfer money between accounts</li>
+                        <li><i class="bi bi-search text-info"></i> Query account information</li>
+                        <li><i class="bi bi-clock-history text-secondary"></i> View complete event history</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

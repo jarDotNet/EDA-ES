@@ -1,0 +1,118 @@
+@page
+@using System.Globalization
+@model Projections.Banking.API.Pages.AccountTransactionsModel
+@{
+    ViewData["Title"] = "Account Transactions";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2 class="mb-4">Account Transactions</h2>
+
+        <!-- Search form for account transactions -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                @Html.AntiForgeryToken()
+                                <label for="AccountId" class="form-label">Account ID (GUID)</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="AccountId"
+                                       name="AccountId"
+                                       value="@Model.AccountId"
+                                       placeholder="E.g. 550e8400-e29b-41d4-a716-446655440000"
+                                       required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary d-block w-100">
+                                    <i class="bi bi-search"></i> List Transactions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Error messages -->
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                @Model.ErrorMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <!-- Account Transactions results -->
+        @if (Model.HasSearched)
+        {
+            @if (Model.Transactions.Any())
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Transactions for Account: <span class="mb-0 fs-6">@Model.AccountId</span></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Account Number</th>
+                                        <th>Account Name</th>
+                                        <th>Transaction Id</th>
+                                        <th>Amount</th>
+                                        <th>Opening Balance</th>
+                                        <th>Closing Balance</th>
+                                        <th>Description</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var transaction in Model.Transactions.OrderByDescending(t => t.Date))
+                                    {
+                                        <tr>
+                                            <td>@transaction.AccountNumber</td>
+                                            <td>@transaction.AccountName</td>
+                                            <td>@transaction.TransactionId</td>
+                                            <td>
+                                                <span class="text-@(transaction.Amount > 0 ? "success" : "danger")">
+                                                    @transaction.Amount.ToString("C", CultureInfo.GetCultureInfo("fr-FR"))
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <strong>@transaction.OpeningBalance.ToString("C", CultureInfo.GetCultureInfo("fr-FR"))</strong>
+                                            </td>
+                                            <td>
+                                                <strong>@transaction.ClosingBalance.ToString("C", CultureInfo.GetCultureInfo("fr-FR"))</strong>
+                                            </td>
+                                            <td>@transaction.Description</td>
+                                            <td>@transaction.Date.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle"></i> No transactions were found for the specified account.
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle"></i> Enter an Account ID to view its transactions.
+            </div>
+        }
+    </div>
+</div>

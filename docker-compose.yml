@@ -1,0 +1,191 @@
+services:
+  # Zookeeper - Required for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+  # Kafka Broker
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - kafka-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Kafka UI for monitoring
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - kafka-network
+    restart: unless-stopped
+
+# Postgres Database for Event Store and Projections
+  postgres:
+    image: postgres:14.18
+    container_name: banking-postgres-db
+    environment:
+      # POSTGRES_DB: banking
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: balrog
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - kafka-network
+
+  # Banking Producer (Event Sourcing API)
+  banking-producer-api:
+    build:
+      context: .
+      dockerfile: ESsample.Banking.API/Dockerfile
+    container_name: banking-producer
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+      - "8083:8083"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8082
+      - Logging__LogLevel__Default=Information
+      - ConnectionStrings__EventStore=Host=banking-postgres-db;Port=5432;Database=eventstore;Username=postgres;Password=balrog
+      - Kafka__BootstrapServers=kafka:29092
+      - Kafka__TopicPrefix=banking-events
+    networks:
+      - kafka-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Banking Consumer
+  banking-consumer:
+    build:
+      context: .
+      dockerfile: Projections.Banking.Consumer/Dockerfile
+    container_name: banking-consumer
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Logging__LogLevel__Default=Information
+      - Kafka__BootstrapServers=kafka:29092
+      - Kafka__TopicPrefix=banking-events
+      - ConnectionStrings__ReadingModels=Host=banking-postgres-db;Port=5432;Database=banking;Username=postgres;Password=balrog
+    networks:
+      - kafka-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # Banking Projections API
+  banking-projections-api:
+    build:
+      context: .
+      dockerfile: Projections.Banking.API/Dockerfile
+    container_name: banking-projections
+    ports:
+      - "8084:8084"
+      - "8085:8085"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8084
+      - Logging__LogLevel__Default=Information
+      - ConnectionStrings__ReadingModels=Host=banking-postgres-db;Port=5432;Database=banking;Username=postgres;Password=balrog
+    networks:
+      - kafka-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8084/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  kafka-network:
+    driver: bridge
+    name: kafka-network
+
+volumes:
+  zookeeper-data:
+    driver: local
+  zookeeper-logs:
+    driver: local
+  kafka-data:
+    driver: local
+  postgres_data:  
